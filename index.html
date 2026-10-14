@@ -2,9 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>nexnc: where to find me</title>
 <meta name="description" content="Every account that belongs to nexnc, with the domain as the root of identity.">
+<script>
+  (function () {
+    var r = document.documentElement, t = null;
+    try { t = localStorage.getItem('nexnc-theme'); } catch (e) {}
+    if (t !== 'light' && t !== 'dark') t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    r.setAttribute('data-theme', t);
+    r.classList.add('js');
+  })();
+</script>
 <style>
   :root {
     --bg: #f3f5f4;
@@ -12,20 +21,19 @@
     --muted: #5d6b68;
     --rule: #cfd8d5;
     --accent: #0b6e6e;
+    --p0: #0b6e6e; --p1: #8a6a00; --p2: #a02c63; --p3: #2a55b8;
     color-scheme: light dark;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #141b1a;
-      --ink: #e6ece9;
-      --muted: #8fa09b;
-      --rule: #2b3836;
-      --accent: #5fd0c4;
+      --bg: #141b1a; --ink: #e6ece9; --muted: #8fa09b; --rule: #2b3836; --accent: #5fd0c4; --p0: #5fd0c4; --p1: #e6c86e; --p2: #e58fb0; --p3: #8fb4ff;
     }
   }
   :root[data-theme="dark"] {
-    --bg: #141b1a; --ink: #e6ece9; --muted: #8fa09b; --rule: #2b3836; --accent: #5fd0c4;
+    --bg: #141b1a; --ink: #e6ece9; --muted: #8fa09b; --rule: #2b3836; --accent: #5fd0c4; --p0: #5fd0c4; --p1: #e6c86e; --p2: #e58fb0; --p3: #8fb4ff;
+    color-scheme: dark;
   }
+  :root[data-theme="light"] { color-scheme: light; }
   :root {
     box-sizing: border-box;
     padding-top: env(safe-area-inset-top, 0px);
@@ -37,38 +45,50 @@
     background: var(--bg);
     color: var(--ink);
     font: 1rem/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    transition: background-color .25s, color .25s;
   }
-  main { max-width: 40rem; margin: 0 auto; padding: 4rem 1.5rem 5rem; }
-  h1 {
-    margin: 0;
-    font-size: clamp(3.5rem, 16vw, 6.5rem);
-    font-weight: 800;
-    letter-spacing: -0.06em;
-    line-height: 0.95;
+  main { max-width: 40rem; margin: 0 auto; padding: 2rem 1.5rem 5rem; }
+
+  .back {
+    display: inline-flex; align-items: center; gap: .5rem;
+    padding: .5rem 1rem; margin-bottom: 2.5rem;
+    border: 1px solid var(--rule); border-radius: 6px;
+    color: var(--ink); text-decoration: none; font-weight: 500; font-size: .95rem;
+    transition: color .15s, border-color .15s;
   }
+  .back:hover { color: var(--accent); border-color: var(--accent); }
+
+  .theme-toggle {
+    display: none;
+    position: fixed; top: calc(1.25rem + env(safe-area-inset-top, 0px)); right: 1.25rem; z-index: 100;
+    align-items: center; justify-content: center;
+    background: var(--bg); border: 1px solid var(--rule); color: var(--muted);
+    padding: .45rem; border-radius: 50%; cursor: pointer; transition: all .2s;
+  }
+  html.js .theme-toggle { display: flex; }
+  .theme-toggle:hover { color: var(--accent); border-color: var(--accent); transform: scale(1.05); }
+  .theme-toggle svg { width: 1.15rem; height: 1.15rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  :root[data-theme="dark"] .moon, :root[data-theme="light"] .sun { display: none; }
+
+  h1 { margin: 0; font-size: clamp(3.5rem, 16vw, 6.5rem); font-weight: 800; letter-spacing: -0.06em; line-height: 0.95; }
   h1 span { color: var(--accent); }
   .lede { margin: 1.25rem 0 0; max-width: 34rem; color: var(--muted); }
-  h2 {
-    margin: 3rem 0 0.5rem;
-    font-size: 1.05rem;
-    font-weight: 700;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--rule);
-  }
+  h2 { margin: 3rem 0 .5rem; font-size: 1.05rem; font-weight: 700; padding-bottom: .5rem; border-bottom: 1px solid var(--rule); }
   dl { margin: 0; }
-  .row {
-    display: flex;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 0.55rem 0;
-    border-bottom: 1px solid var(--rule);
-  }
+  .row { display: flex; justify-content: space-between; gap: 1rem; padding: .55rem 0; border-bottom: 1px solid var(--rule); }
   dt { color: var(--muted); flex: 0 0 auto; }
   dd { margin: 0; text-align: right; overflow-wrap: anywhere; }
   a { color: var(--ink); text-decoration-color: var(--accent); text-underline-offset: 3px; }
   a:hover { color: var(--accent); }
-  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
-  .note { margin-top: 3rem; color: var(--muted); font-size: 0.9rem; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+  .note { margin-top: 3rem; color: var(--muted); font-size: .9rem; }
+  /* Footer rev code: type the hex digits in data-hex. Colors go by place from the right. */
+  .foot { margin-top: 2.5rem; text-align: right; }
+  .rev { font-family: ui-monospace, Menlo, monospace; font-size: .75rem; }
+  .rev::before { content: "rev: 0x"; color: var(--muted); }
+  .rev::after { content: attr(data-hex);
+    background: repeating-linear-gradient(to left, var(--p0) 0 1ch, var(--p1) 1ch 2ch, var(--p2) 2ch 3ch, var(--p3) 3ch 4ch);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
   @media (max-width: 30rem) {
     .row { flex-direction: column; gap: 0; }
     dd { text-align: left; }
@@ -76,14 +96,22 @@
 </style>
 </head>
 <body>
+
+<button class="theme-toggle" id="themeBtn" aria-label="Toggle theme">
+  <svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+  <svg class="moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+</button>
+
 <main>
+  <a href="https://nexnc.com" class="back" aria-label="Back to nexnc.com home">&larr; Home</a>
+
   <h1>nex<span>nc</span></h1>
   <p class="lede">One handle everywhere. If an account isn't listed here, it isn't mine. The domain nexnc.com is the root of all of it.</p>
 
   <h2>Contact</h2>
   <dl>
     <div class="row"><dt>Email</dt><dd><a rel="me" href="mailto:hi@nexnc.com">hi@nexnc.com</a></dd></div>
-    <div class="row"><dt>Email (GPG Signing)</dt><dd><a rel="me" href= "">git@nexnc.com</a></dd></div>
+    <div class="row"><dt>Email (GPG Signing)</dt><dd><a rel="me" href="mailto:git@nexnc.com">git@nexnc.com</a></dd></div>
     <div class="row"><dt>Matrix</dt><dd><a rel="me" href="https://matrix.to/#/@nexnc:matrix.org">@nexnc:matrix.org</a></dd></div>
     <div class="row"><dt>Bluesky</dt><dd><a rel="me" href="https://bsky.app/profile/nexnc.com">@nexnc.com</a></dd></div>
     <div class="row"><dt>Discord</dt><dd>@nexnc</dd></div>
@@ -143,7 +171,18 @@
     <div class="row"><dt>Buy Me a Coffee</dt><dd><a rel="me" href="https://buymeacoffee.com/nexnc">buymeacoffee.com/nexnc</a></dd></div>
   </dl>
 
-  <p class="note">Commits are signed with GPG and authored as git@nexnc.com. Both nexnc.com and nexnc.de use DNSSEC. There are no official PayPal or LinkedIn accounts (I mean there are, but they are disabled for privacy).</p>
+  <p class="note">Commits are signed with GPG and authored as git@nexnc.com. Both nexnc.com and nexnc.de use DNSSEC.</p>
+
+  <footer class="foot"><span class="rev" data-hex="4B"></span></footer>
 </main>
+
+<script>
+  document.getElementById('themeBtn').addEventListener('click', function () {
+    var r = document.documentElement;
+    var t = r.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    r.setAttribute('data-theme', t);
+    try { localStorage.setItem('nexnc-theme', t); } catch (e) {}
+  });
+</script>
 </body>
 </html>
